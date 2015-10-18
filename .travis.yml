@@ -1,6 +1,8 @@
 language: go
 go:
 - 1.5
+before_script:
+- gem install fpm
 script:
 - make all
 branches:
@@ -11,5 +13,7 @@ deploy:
   username: lstoll
   package_glob: "*.deb"
   dist: ubuntu/trusty
+  on:
+    tags: true
   token:
     secure: Kez4Reg3dfPSg+5CC68ADkdfBDJtntG8xeVnehUj02ipSgqa0iZKw3ENURTeqWhZg78vOaJzt9NpVmZUwUL8emoQsiJ1lNqKqNbSxK8yc+QsvXKva5ue4oyxM/5bq0bGvLYCkZBvAfTrv/Q01CqGn7C2WmWRrPtj3gt40x4CqsmPf5GTujBR7ZxljXw1c/o5SQ1gLeg0oBkUBQ8x1vtyAZn6B8RAoEoHsACxefI8jNl+TGxkZYmZk4NlDsHGnrK9Jt8JYxRdknMizu8QV2jAXaMgZh5uDO0DjD8FF+wxxv6K/xvDd1WxdyN+AhS4oEjvP5SGVr2X50gK2UaAyopGODTcZLMt6UexrhuGg9Ds41Y40qozUsGwzTwECO3V7igTJzqe7lXUnpWhL31Eh53jTCzRbErk6lwVpNRkd6MUaQJByQA+w9UxVRIAh9KooA40dVk5Vt6pEuqtFPAcAAdsWTHvP19RvN3kwDQycdb+XSZVuw8tx9NDoeJ0+ObmnyMAaGPhy+1aLrz/coTnI/PN+eSw8PKgbnWcRj1oQa/VyLdizx2nlz6Elw8NMi64SNcjLx3Z4jbC5KXqnJUKV2X0QyARSchTS1RFLvvfvJ/gzAw2AM2JIPFXn03Mi0B+TVWf+OVgWeDUwGIcvVTJvEruCxTNMre4eHXJH8dbTwkYcKY=
