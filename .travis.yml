@@ -12,6 +12,7 @@ branches:
 deploy:
   provider: packagecloud
   username: lstoll
+  repository: packages
   package_glob: "*.deb"
   dist: ubuntu/trusty
   on:
