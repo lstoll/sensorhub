@@ -86,11 +86,25 @@ func processLine(read *MeterRead) {
 	if previousRead == 0 {
 		// we have no baseline, set and wait for more
 		previousRead = read.Message.Consumption
-		previousReadTime = read.Time
+		previousReadTime = *read.Time
 		return
 	}
 
+	timeBetweenReads := read.Time.Sub(previousReadTime)
+	if timeBetweenReads.Hours() < 1.0 {
+		// not long enough, bail out
+		return
+	}
+
+	// it's been more than an hour, so we can report data. Compare the two readings, then factor in
+	// that the time might have been more than an hour to get a cf/hr measurement.
+	consumed := float64(read.Message.Consumption - previousRead)
+	minsBetweenReads := timeBetweenReads.Minutes()
+	consumedPerMin := consumed / minsBetweenReads
+	consumedPerHour := consumedPerMin * 60
+	reportMetric(consumedPerHour)
 }
 
-func reportMetric() {
+func reportMetric(cfHr float64) {
+	fmt.Printf("At %s, consumption rate is %f cf/hr", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), cfHr)
 }
