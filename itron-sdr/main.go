@@ -64,7 +64,8 @@ func main() {
 				fmt.Fprintln(os.Stderr, fmt.Sprintf("Error unmarshaling line (%s):| %s", err, text))
 				continue
 			}
-			fmt.Printf("line | %q\n", line)
+			fmt.Printf("received | %#v\n", line)
+			processLine(line)
 		}
 	}()
 
