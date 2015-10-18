@@ -36,7 +36,7 @@ package: build
 	fpm -s dir -t deb -C stage \
 		-n sensorhub \
 		-v $(shell git describe --abbrev=0 --tags) \
-		-d "librtlsdr > 0" \
+		-d "rtlamr > 0" \
 		usr
 	rm -fr stage
 
