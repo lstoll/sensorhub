@@ -64,7 +64,7 @@ func main() {
 				fmt.Fprintln(os.Stderr, fmt.Sprintf("Error unmarshaling line (%s):| %s", err, text))
 				continue
 			}
-			fmt.Printf("received | %#v\n", line)
+			fmt.Printf("received | %q\n", line)
 			processLine(line)
 		}
 	}()
@@ -104,8 +104,11 @@ func processLine(read *MeterRead) {
 	consumedPerMin := consumed / minsBetweenReads
 	consumedPerHour := consumedPerMin * 60
 	reportMetric(consumedPerHour)
+	// and start again.
+	previousRead = read.Message.Consumption
+	previousReadTime = *read.Time
 }
 
 func reportMetric(cfHr float64) {
-	fmt.Printf("At %s, consumption rate is %f cf/hr", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), cfHr)
+	fmt.Printf("At %s, consumption rate is %f cf/hr\n", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), cfHr)
 }
