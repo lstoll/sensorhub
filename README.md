@@ -8,7 +8,7 @@ Currently the output point is librato. Inputs include:
 
 ### itron-sdr
 
-This will read itron stuff and report it as hourly usage rate. Uses [rtlamr](https://github.com/bemasher/rtlamr)
+This will read itron stuff and report it as hourly usage rate. Uses [rtlamr](https://github.com/bemasher/rtlamr). [README.md](itron-sdr/README.md)
 
 ## Packages
 
