@@ -22,6 +22,8 @@ tar -zxvf /tmp/go1.5.1.linux-amd64.tar.gz
 echo 'PATH=/usr/local/go/bin:$PATH' > /etc/profile.d/99go_path.sh
 echo 'export GOPATH=$HOME/gocode' >> ~vagrant/.profile
 echo 'export PATH=$GOPATH/bin:$PATH' >> ~vagrant/.profile
+echo 'export GO15VENDOREXPERIMENT=1' >> ~vagrant/.profile
+chown vagrant ~vagrant/.profile
 mkdir -p ~vagrant/gocode/src/github.com/lstoll
 ln -s /vagrant ~vagrant/gocode/src/github.com/lstoll/sensorhub
 chown vagrant ~vagrant/gocode

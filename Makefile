@@ -41,4 +41,4 @@ package: build
 	rm -fr stage
 
 govendor:
-	$(GOINSTALL) github.com/kardianos/govendor
+	go get -u github.com/kardianos/govendor

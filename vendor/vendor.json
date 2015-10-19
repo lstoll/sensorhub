@@ -1,0 +1,16 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "github.com/kouhin/envflag",
+			"revision": "0e9a8606164937a324853295ffa8e9803372e765",
+			"revisionTime": "2015-08-19T02:43:21+09:00"
+		},
+		{
+			"path": "github.com/lstoll/go-librato",
+			"revision": "2c48a3c30010299942b543044492ce969544d4b5",
+			"revisionTime": "2015-10-18T21:29:38-04:00"
+		}
+	]
+}
