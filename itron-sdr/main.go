@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"github.com/kouhin/envflag"
+	"github.com/lstoll/go-librato"
 )
 
 var (
 	previousRead     int
 	previousReadTime time.Time
+	gauge            chan interface{}
 )
 
 type MeterRead struct {
@@ -35,16 +37,40 @@ type MeterMessage struct {
 
 func main() {
 	var (
-		meterId = flag.String("meter-id", "REQUIRED", "ID of the meter to read from")
+		meterId       = flag.String("meter-id", "REQUIRED", "ID of the meter to read from")
+		libratoUser   = flag.String("librato-user", "REQUIRED", "User for Librato")
+		libratoToken  = flag.String("librato-token", "REQUIRED", "Token for Librato")
+		libratoSource = flag.String("librato-source", "REQUIRED", "Source name for librato")
+		libratoMetric = flag.String("librato-metric", "REQUIRED", "Metric name for librato")
 	)
 	if err := envflag.Parse(); err != nil {
 		panic(err)
 	}
-
 	if *meterId == "REQUIRED" {
 		fmt.Println("meter-id is a required field")
 		os.Exit(1)
 	}
+	if *libratoUser == "REQUIRED" {
+		fmt.Println("librato-usser is a required field")
+		os.Exit(1)
+	}
+	if *libratoToken == "REQUIRED" {
+		fmt.Println("librato-token is a required field")
+		os.Exit(1)
+	}
+	if *libratoSource == "REQUIRED" {
+		fmt.Println("librato-source is a required field")
+		os.Exit(1)
+	}
+	if *libratoSource == "REQUIRED" {
+		fmt.Println("librato-metric is a required field")
+		os.Exit(1)
+	}
+
+	metrics := librato.NewSimpleMetrics(*libratoUser, *libratoToken, *libratoSource)
+	defer metrics.Wait()
+	defer metrics.Close()
+	gauge = metrics.GetGauge(*libratoMetric)
 
 	cmdName := "rtlamr"
 	cmdArgs := []string{"-format=json", "-filterid=" + *meterId}
@@ -110,5 +136,6 @@ func processLine(read *MeterRead) {
 }
 
 func reportMetric(cfHr float64) {
+	gauge <- cfHr
 	fmt.Printf("At %s, consumption rate is %f cf/hr\n", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), cfHr)
 }
