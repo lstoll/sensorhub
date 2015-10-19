@@ -9,8 +9,8 @@
 		},
 		{
 			"path": "github.com/lstoll/go-librato",
-			"revision": "2c48a3c30010299942b543044492ce969544d4b5",
-			"revisionTime": "2015-10-18T21:29:38-04:00"
+			"revision": "08dcf296dc868c97d0e2912298368db38debbf62",
+			"revisionTime": "2015-10-18T22:19:11-04:00"
 		}
 	]
 }

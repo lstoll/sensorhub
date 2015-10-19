@@ -17,17 +17,26 @@ type Metrics interface {
 }
 
 func handle(i interface{}, bodyMetric tmetric) bool {
-	var obj map[string]int64
+	var intobj map[string]int64
+	var ifobj map[string]interface{}
 	var ok bool
 	switch ch := i.(type) {
+	case chan interface{}:
+		bodyMetric["value"], ok = <-ch
 	case chan int64:
 		bodyMetric["value"], ok = <-ch
+	case chan map[string]interface{}:
+		ifobj, ok = <-ch
+		for k, v := range ifobj {
+			bodyMetric[k] = v
+		}
 	case chan map[string]int64:
-		obj, ok = <-ch
-		for k, v := range obj {
+		intobj, ok = <-ch
+		for k, v := range intobj {
 			bodyMetric[k] = v
 		}
 	}
+
 	return ok
 }
 
