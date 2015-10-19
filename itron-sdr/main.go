@@ -14,9 +14,8 @@ import (
 )
 
 var (
-	previousRead     int
-	previousReadTime time.Time
-	gauge            chan interface{}
+	previousRead       int
+	consumptionCounter chan int64
 )
 
 type MeterRead struct {
@@ -41,7 +40,6 @@ func main() {
 		libratoUser   = flag.String("librato-user", "REQUIRED", "User for Librato")
 		libratoToken  = flag.String("librato-token", "REQUIRED", "Token for Librato")
 		libratoSource = flag.String("librato-source", "REQUIRED", "Source name for librato")
-		libratoMetric = flag.String("librato-metric", "REQUIRED", "Metric name for librato")
 	)
 	if err := envflag.Parse(); err != nil {
 		panic(err)
@@ -62,15 +60,11 @@ func main() {
 		fmt.Println("librato-source is a required field")
 		os.Exit(1)
 	}
-	if *libratoSource == "REQUIRED" {
-		fmt.Println("librato-metric is a required field")
-		os.Exit(1)
-	}
 
 	metrics := librato.NewSimpleMetrics(*libratoUser, *libratoToken, *libratoSource)
 	defer metrics.Wait()
 	defer metrics.Close()
-	gauge = metrics.GetGauge(*libratoMetric)
+	consumptionCounter = metrics.GetCounter("gas.cf")
 
 	cmdName := "rtlamr"
 	cmdArgs := []string{"-format=json", "-filterid=" + *meterId}
@@ -90,7 +84,7 @@ func main() {
 				fmt.Fprintln(os.Stderr, fmt.Sprintf("Error unmarshaling line (%s):| %s", err, text))
 				continue
 			}
-			fmt.Printf("received | %q\n", line)
+			fmt.Print("reading received: ")
 			processLine(line)
 		}
 	}()
@@ -110,32 +104,8 @@ func main() {
 }
 
 func processLine(read *MeterRead) {
-	if previousRead == 0 {
-		// we have no baseline, set and wait for more
-		previousRead = read.Message.Consumption
-		previousReadTime = *read.Time
-		return
-	}
+	fmt.Printf("at %s, consumption is %d", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), read.Message.Consumption)
+	consumptionCounter <- int64(read.Message.Consumption)
 
-	timeBetweenReads := read.Time.Sub(previousReadTime)
-	if timeBetweenReads.Hours() < 1.0 {
-		// not long enough, bail out
-		return
-	}
-
-	// it's been more than an hour, so we can report data. Compare the two readings, then factor in
-	// that the time might have been more than an hour to get a cf/hr measurement.
-	consumed := float64(read.Message.Consumption - previousRead)
-	minsBetweenReads := timeBetweenReads.Minutes()
-	consumedPerMin := consumed / minsBetweenReads
-	consumedPerHour := consumedPerMin * 60
-	reportMetric(consumedPerHour)
-	// and start again.
 	previousRead = read.Message.Consumption
-	previousReadTime = *read.Time
-}
-
-func reportMetric(cfHr float64) {
-	gauge <- cfHr
-	fmt.Printf("At %s, consumption rate is %f cf/hr\n", time.Now().Format("2006-01-02T15:04:05.999999-07:00"), cfHr)
 }
