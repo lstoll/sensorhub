@@ -51,7 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 	if *libratoUser == "REQUIRED" {
-		fmt.Println("librato-usser is a required field")
+		fmt.Println("librato-user is a required field")
 		os.Exit(1)
 	}
 	if *libratoToken == "REQUIRED" {
